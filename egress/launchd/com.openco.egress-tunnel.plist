@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<!-- launchd twin of egress/systemd/openco-egress-tunnel.service.
+	     launchd has no EnvironmentFile, so the shell sources /etc/tunnel/tunnel.env
+	     (PORT + OPENCO3) before exec'ing autossh — same single source of truth. -->
+	<key>Label</key>
+	<string>com.openco.egress-tunnel</string>
+	<key>ProgramArguments</key>
+	<array>
+		<string>/bin/sh</string>
+		<string>-c</string>
+		<string>PATH=/opt/homebrew/bin:/usr/local/bin:$PATH; . /etc/tunnel/tunnel.env; export AUTOSSH_GATETIME=0; exec autossh -M 0 -N -o ServerAliveInterval=30 -o ServerAliveCountMax=3 -o ExitOnForwardFailure=yes -o StrictHostKeyChecking=accept-new -o UserKnownHostsFile=/etc/tunnel/known_hosts -i /etc/tunnel/id_ed25519 -R "172.18.0.1:${PORT}:127.0.0.1:1080" "tunnel@${OPENCO3}"</string>
+	</array>
+	<key>UserName</key>
+	<string>_egress</string>
+	<key>RunAtLoad</key>
+	<true/>
+	<key>KeepAlive</key>
+	<true/>
+	<key>ThrottleInterval</key>
+	<integer>10</integer>
+	<key>StandardErrorPath</key>
+	<string>/var/log/openco-egress-tunnel.log</string>
+</dict>
+</plist>

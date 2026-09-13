@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<!-- launchd twin of egress/systemd/openco-microsocks.service:
+	     KeepAlive + RunAtLoad = Restart=always + WantedBy=multi-user.target -->
+	<key>Label</key>
+	<string>com.openco.microsocks</string>
+	<key>ProgramArguments</key>
+	<array>
+		<string>/bin/sh</string>
+		<string>-c</string>
+		<string>PATH=/opt/homebrew/bin:/usr/local/bin:$PATH; exec microsocks -i 127.0.0.1 -p 1080</string>
+	</array>
+	<key>UserName</key>
+	<string>_egress</string>
+	<key>RunAtLoad</key>
+	<true/>
+	<key>KeepAlive</key>
+	<true/>
+	<key>StandardErrorPath</key>
+	<string>/var/log/openco-microsocks.log</string>
+</dict>
+</plist>

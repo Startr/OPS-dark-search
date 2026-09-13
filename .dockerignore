@@ -1,0 +1,11 @@
+# Hidden-artifact allowlist: deny dotfiles and dotfolders everywhere in the
+# build context unless they are intentionally needed inside the image.
+.*
+
+# The image only needs searxng/ (see Dockerfile COPY) — exclude everything else.
+egress/
+*.log
+*.tgz
+deploy.tar
+README.md
+Makefile

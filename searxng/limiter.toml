@@ -1,0 +1,17 @@
+# dark-search limiter — tiered access.
+# Public requests (via captain-nginx, real IP from X-Forwarded-For) get SearXNG's
+# stock limits: throttled, never bricked. In-swarm callers (markdown-search) and
+# the future tailnet hit pass_ip and skip limits entirely.
+
+[botdetection]
+trusted_proxies = ["10.0.1.0/24"]   # captain-nginx (overlay) — real client IP from XFF
+
+[botdetection.ip_limit]
+link_token = false                   # keep non-browser/API clients working
+
+[botdetection.ip_lists]
+pass_ip = [
+  "10.0.1.0/24",    # in-swarm callers (markdown-search) — unlimited
+  "100.64.0.0/10",  # tailnet, for the Tailscale rollout
+]
+block_ip = []

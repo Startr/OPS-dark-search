@@ -1,0 +1,72 @@
+# dark-search — minimal overlay on SearXNG defaults (DRY: only deltas live here).
+# base_url, secret_key, limiter, valkey come from CapRover env vars:
+#   SEARXNG_BASE_URL, SEARXNG_SECRET, SEARXNG_LIMITER, SEARXNG_VALKEY_URL
+use_default_settings: true
+
+general:
+  instance_name: "dark-search"
+  donation_url: false
+  contact_url: false
+
+server:
+  image_proxy: false
+
+search:
+  formats:
+    - html
+  # Humane self-healing: a CAPTCHA benches an engine for 30 min, not 24 h.
+  suspended_times:
+    SearxEngineCaptcha: 1800
+    SearxEngineAccessDenied: 1800
+    SearxEngineTooManyRequests: 900
+    cf_SearxEngineCaptcha: 3600
+    cf_SearxEngineAccessDenied: 3600
+    recaptcha_SearxEngineCaptcha: 3600
+
+outgoing:
+  request_timeout: 4.0
+  extra_proxy_timeout: 10.0
+
+engines:
+  # fallback tier — direct, enabled so results survive a tunnel outage
+  - name: mojeek
+    disabled: false
+  - name: qwant
+    disabled: false
+  # proxied tier — residential egress, per-engine so suspensions stay independent
+  - name: google
+    proxies: &home
+      all://:
+        - socks5h://172.18.0.1:1080   # home — one line per host, matches egress/hosts/
+    retries: 1
+  - name: google images
+    proxies: *home
+  - name: google news
+    proxies: *home
+  - name: google videos
+    proxies: *home
+  - name: duckduckgo
+    proxies: *home
+    retries: 1
+  - name: duckduckgo images
+    proxies: *home
+  - name: duckduckgo videos
+    proxies: *home
+  - name: duckduckgo news
+    proxies: *home
+  - name: startpage
+    proxies: *home
+    retries: 1
+  - name: startpage news
+    proxies: *home
+  - name: startpage images
+    proxies: *home
+  - name: brave
+    proxies: *home
+    retries: 1
+  - name: brave.images
+    proxies: *home
+  - name: brave.videos
+    proxies: *home
+  - name: brave.news
+    proxies: *home

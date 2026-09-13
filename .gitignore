@@ -1,0 +1,20 @@
+# Hidden-artifact allowlist: deny dotfiles and dotfolders everywhere in the
+# repo unless they are intentionally shared and explicitly included below.
+.*
+!/.gitignore
+!/.gitattributes
+!/.dockerignore
+!/.editorconfig
+# .env.example at any depth (no leading slash). Keep this note on its OWN line —
+# gitignore has no inline comments; a trailing comment becomes part of the pattern.
+!.*.example
+
+# Non-dot build & runtime junk (root-anchored so vendored sub-repos keep their own)
+*.log
+*.tgz
+deploy.tar
+
+# Project-specific runtime data (never commit)
+# Private keys never exist in this repo by design — install-egress.sh generates
+# them on each box under /etc/tunnel/. Belt-and-braces pattern anyway:
+id_ed25519

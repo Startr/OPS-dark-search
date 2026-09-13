@@ -1,0 +1,23 @@
+[Unit]
+Description=Reverse SSH tunnel exposing this host's SOCKS on openco3
+After=network-online.target openco-microsocks.service
+Wants=network-online.target
+Requires=openco-microsocks.service
+
+[Service]
+User=egress
+EnvironmentFile=/etc/tunnel/tunnel.env
+Environment=AUTOSSH_GATETIME=0
+ExecStart=/usr/bin/autossh -M 0 -N \
+  -o ServerAliveInterval=30 -o ServerAliveCountMax=3 \
+  -o ExitOnForwardFailure=yes \
+  -o StrictHostKeyChecking=accept-new \
+  -o UserKnownHostsFile=/etc/tunnel/known_hosts \
+  -i /etc/tunnel/id_ed25519 \
+  -R 172.18.0.1:${PORT}:127.0.0.1:1080 \
+  tunnel@${OPENCO3}
+Restart=always
+RestartSec=10
+
+[Install]
+WantedBy=multi-user.target

@@ -29,16 +29,19 @@ outgoing:
 
 engines:
   # fallback tier — direct, enabled so results survive a tunnel outage
+  # (qwant can't be here: it CAPTCHAs datacenter IPs, so it rides the proxy below)
   - name: mojeek
-    disabled: false
-  - name: qwant
     disabled: false
   # proxied tier — residential egress, per-engine so suspensions stay independent
   - name: google
+    disabled: false   # defaults ship google off; we want it in the default profile
     proxies: &home
       all://:
         - socks5h://172.18.0.1:1080   # home — one line per host, matches egress/hosts/
     retries: 1
+  - name: qwant
+    disabled: false
+    proxies: *home
   - name: google images
     proxies: *home
   - name: google news
